@@ -1,0 +1,208 @@
+/* Define a class to represent a bank account. Include the following members: 
+Data members: 
+  1. Name of the depositor. 
+  2. Account number. 
+  3. Type of account. 
+  4. Balance amount in the account. 
+Member functions: 
+  1. To assign initial values. 
+  2. To deposit an amount. 
+  3. To withdraw an amount after checking the balance. 
+  4. To display the name and balance. 
+Write a main program to test the program. */
+
+# include <iostream>
+using namespace std;
+
+# define max 100
+
+class account 
+{
+    private:
+        string name;
+        string ac_no;
+        string ac_type;
+        double balance;
+    
+    public:
+        account ();
+        void deposit ();
+        void withdraw ();
+        void ac_info ();
+        string get_ac_no();
+};
+
+class bank_app
+{
+    private:
+        account *acc_obj[max];
+        account *tmp;
+        int no_of_ac = 0;
+        string ac_no;
+        int opt, opt2;
+    
+    public:
+        void app ();
+        account * fetch(string);
+};
+
+account :: account ()
+{
+    cout << "Do your Registration for Online Services" << endl;
+    cout << "! In case of invalid info, Ac. will be suspended !" << endl;
+    cout << "Name: ";
+    while(getc(stdin) != '\n');
+    getline(cin, name);
+    cout << "Ac Type: ";
+    cin >> ac_type;
+    cout << "Ac No.: ";
+    cin >> ac_no;
+    cout << "Balance: ";
+    cin >> balance;
+    cout << "Information Updated..." << endl;
+}
+
+void account :: deposit ()
+{
+    double amt;
+    
+    cout << "Enter Amount to deposit: ";
+    cin >> amt;
+    
+    balance += amt;
+    
+    cout << "Amount " << amt << " Deposited Successfully" << endl;
+}
+
+void account :: withdraw ()
+{
+    double amt;
+    
+    cout << "Enter amount to withdraw: ";
+    cin >> amt;
+    
+    if (amt > balance)
+        cout << "!!! Insufficient Balance !!!" << endl;
+    
+    else
+    {
+        balance -= amt;
+        cout << "Amount " << amt << " Withdrawal Successfully" << endl;
+    }
+}
+
+void account :: ac_info ()
+{
+    cout << "Account Information" << endl;
+    cout << "Name: " << name << endl;
+    cout << "Balance: " << balance << endl;
+}
+
+string account :: get_ac_no()
+{
+    return ac_no;
+}
+
+void bank_app :: app ()
+{
+    do
+    {
+        cout << endl << "----------------------" << endl;
+        cout << "1 :: New account" << endl;
+        cout << "2 :: Existing account" << endl;
+        cout << "3 :: Exit" << endl;
+        cout << "Enter your choice : ";
+        cin >> opt;
+        
+        switch (opt)
+        {
+            case 1:
+                if (no_of_ac > max)
+                    cout << "Limit Exceed for new account" << endl;
+                
+                else
+                {
+                    acc_obj[no_of_ac] = new account();
+                    no_of_ac++;
+                }
+                break;
+                
+            case 2:
+                
+                if (no_of_ac == 0)
+                    cout << " No account existed..." << endl;
+                
+                else
+                {
+                    cout << "Enter your Ac No: ";
+                    cin >> ac_no;
+                    
+                    tmp = NULL;
+                    tmp = fetch(ac_no);
+                    
+                    if(tmp == NULL)
+                        cout << "Ac does not existed" << endl;
+                    
+                    else
+                    {
+                        cout << "1 :: Withdraw" << endl;
+                        cout << "2 :: Deposit" << endl;
+                        cout << "3 :: Balance" << endl;
+                        cout << "4 :: Back to Main Menu" << endl;
+                        cout << "Enter your choice : ";
+                        cin >> opt2;
+                        
+                        switch (opt2)
+                        {
+                            case 1:
+                                tmp->withdraw();
+                                break;
+                                
+                            case 2:
+                                tmp->deposit();
+                                break;
+                                
+                            case 3:
+                                tmp->ac_info();
+                                break;
+                                
+                            case 4:
+                                cout << "Redirecting to main menu" << endl;
+                                break;
+                                
+                            default:
+                                cout << "Invalid choice, redirecting to main menu " << endl;
+                        }
+                    }
+                }
+                break;
+                
+            case 3:
+                cout << "Exiting..." << endl;
+                break;
+                
+            default:
+                cout << "Invalid Choice" << endl;
+        }
+    }while (opt != 3);
+}
+
+account * bank_app :: fetch (string ac_no)
+{
+    tmp = acc_obj[0];
+    for (int i = 0; i < no_of_ac; i++)
+    {
+        if(tmp->get_ac_no() == ac_no)
+            return tmp;
+    }
+    
+    return NULL;
+}
+
+int main ()
+{
+    bank_app ubi;
+    ubi.app();
+    
+    return 0;
+}

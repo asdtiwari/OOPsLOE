@@ -1,0 +1,209 @@
+/* Create two classes DM and DB which store the value of distances. DM stores distances in 
+meters and centimeters and DB in feet and inches. Write a program that can read values 
+for the class objects and add one object of DM with another object of DB. Use a friend 
+function to carry out the addition operation. The object that stores the results may be a 
+DM object or DB object, depending on the units in which the results are required. The 
+display should be in the format of feet and inches or meters and centimeters depending on 
+the object on display. */
+
+# include <iostream>
+using namespace std;
+
+class DB;
+
+class DM
+{
+    long meter;
+    double centimeter;
+    
+    public:
+        DM();
+        void set_values(long, double);
+        void display();
+        DB m_to_ft();
+        friend DM calculate(DM, DB);
+};
+
+class DB
+{
+    long feet;
+    double inches;
+    
+    public:
+        DB();
+        void set_values(long, double);
+        void display();
+        DM ft_to_m();
+        friend DM calculate(DM, DB);
+};
+
+class App
+{
+    public:
+        void run();
+};
+
+DM :: DM ()
+{
+    meter = 0;
+    centimeter = 0.0;
+}
+
+void DM :: set_values (long meter, double centimeter)
+{
+    this->meter = meter;
+    this->centimeter = centimeter;
+}
+
+void DM :: display ()
+{
+    cout << endl << "\t" << meter << " m " << centimeter << " cm ";
+}
+
+DB DM :: m_to_ft ()
+{
+    long feet;
+    double inches, centimeter;
+    
+    centimeter = meter * 100 + this-> centimeter;
+    inches = centimeter / 2.54;
+    feet = (long)(inches / 12);
+    inches -= feet * 12;
+    
+    DB tmp;
+    tmp.set_values(feet, inches);
+    
+    return tmp;
+}
+
+DB :: DB ()
+{
+    feet = 0;
+    inches = 0.0;
+}
+
+void DB :: set_values (long feet, double inches)
+{
+    this->feet = feet;
+    this->inches = inches;
+}
+
+void DB :: display ()
+{
+    cout << endl << "\t" << feet << " ft " << inches << " in " ;
+}
+
+DM DB :: ft_to_m ()
+{
+    long meter;
+    double inches, centimeter;
+    
+    inches = feet * 12 + this->inches;
+    centimeter = inches * 2.54;
+    meter = (long)centimeter / 100;
+    centimeter -= meter * 100;
+    
+    DM tmp;
+    tmp.set_values(meter, centimeter);
+    
+    return tmp;
+}
+
+DM calculate (DM obj, DB obj2)
+{
+    DM tmp;
+    tmp = obj2.ft_to_m();
+    
+    tmp.meter += obj.meter;
+    tmp.centimeter += obj.centimeter;
+
+    tmp.meter += (long)(tmp.centimeter) / 100;
+    tmp.centimeter -= ((long)(tmp.centimeter) / 100) * 100;
+    
+    return tmp;
+}
+
+void App :: run ()
+{
+    DM obj, obj1;
+    DB obj2, obj4;
+    
+    long meter, feet;
+    double centimeter, inches;
+    
+    int opt;
+    do
+    {
+        cout << endl << " ---------------------- " << endl;
+        cout << "| Addition of Distance |";
+        cout << endl << " ---------------------- " << endl;
+        cout << endl << "Enter distance in m and cm: ";
+        cin >> meter >> centimeter;
+        obj1.set_values(meter, centimeter);
+        
+        cout << endl << "Enter distance in ft and in: ";
+        cin >> feet >> inches;
+        obj2.set_values(feet, inches);
+        
+        cout << endl << "----------------------";
+        obj1.display();
+        cout << endl << "----------------------";
+        obj2.display();
+        cout << endl << "----------------------" << endl;
+        obj = calculate(obj1, obj2);
+        
+        do
+        {
+            cout << endl << endl << "Output Format";
+            cout << endl << "1 :: m cm";
+            cout << endl << "2 :: ft in";
+            cout << endl << "Your Choice: ";
+            cin >> opt;
+            
+            if (opt == 1)
+            {
+                cout << endl << "----------------------";
+                cout << endl << "Total:";
+                obj.display();
+                cout << endl << "----------------------" << endl;
+            }
+            
+            else if (opt == 2)
+            {
+                cout << endl << "---------------------- " << endl;
+                cout << "Total:";
+                obj4 = obj.m_to_ft();
+                obj4.display();
+                cout << endl << "---------------------- " << endl;
+            }
+            
+            else
+            {
+                cout << endl << "Invalid choice" << endl;
+            }
+        }while (opt != 1 && opt != 2);
+        
+        do
+        {
+            cout << endl << endl << "1 :: Run Again";
+            cout << endl << "2 :: Exit";
+            cout << endl << "Your choice: ";
+            cin >> opt;
+            
+            if (opt == 2)
+                cout << endl << "Exiting..." << endl;
+            
+            else if (opt != 1)
+                cout << endl << "Invalid choice" << endl;
+        }while (opt != 1 && opt != 2);
+    }while (opt != 2);
+}
+
+// Testing
+int main ()
+{
+    App app;
+    app.run();
+    
+    return 0;
+}
